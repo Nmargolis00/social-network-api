@@ -9,7 +9,7 @@ const{getAllThoughts, getThoughtById, createThought, updateThought, deleteThough
 router.route('/').get(getAllThoughts).post(createThought);
 
 // getting a thought by id, updating a thought, and deleting a thought
-router.route('/:id').get(getThoughtById).put(updateThought).delete(deleteThought);
+router.route('/:thoughtId').get(getThoughtById).put(updateThought).delete(deleteThought);
 
 // adding a reaction and removing a reaction
 router.route('/:thoughtId/reactions').post(addReaction);
