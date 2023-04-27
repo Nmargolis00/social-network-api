@@ -4,16 +4,19 @@ const { User, Thoughts } = require("../models");
 const thoughtsController = {
   //get all thoughts
 
-  getAllThoughts(req, res) {
-    User.find({})
-      .select("-__v")
-      .then((dbUserData) => res.json(dbUserData))
-      .catch((err) => {
-        console.log(err);
-        res.status(400).json(err);
-      });
+  async getAllThoughts(req, res) {
+    try {
+        const thoughts = await Thoughts.find({})
+        .populate({
+            path: "reactions",
+            select: "-__v",
+        })
+        res.status(200).json(thoughts);
+  } catch (err) {
+    console.error({message: err});
+    return res.status(500).json(err);
+  }
   },
-
   //get one thought by id
 
   getThoughtById(req, res) {
