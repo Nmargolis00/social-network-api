@@ -20,16 +20,12 @@ const thoughtsController = {
   //get one thought by id
 
   getThoughtById(req, res) {
-    User.findOne({ _id: req.params.id })
-    .populate({
-      path: "thoughts",
-      select: "-__v",
-    })
-    .then((dbUserData) => {
-        if(!dbUserData) {
-          return res.status(404).json({message: "No user found with this id!"});
+    Thoughts.findOne({ _id: req.params.thoughtId })
+    .then((thoughts) => {
+        if(!thoughts) {
+          return res.status(404).json({message: "No thought found with this id!"});
         }
-        res.json(dbUserData);
+        res.json(thoughts);
     })
     .catch((err) => {
       console.log(err);
@@ -40,76 +36,84 @@ const thoughtsController = {
   //create a new thought
 
   createThought(req, res) {
-    User.create(req.body)
-    .then((dbUserData) => res.json(dbUserData))
+    Thoughts.create(req.body)
+    .then((thoughts) => res.json(thoughts))
     .catch((err) => res.status(400).json(err));
   },
 
   //update a thought by id
 
   updateThought(req, res) {
-    User.findOneAndUpdate(
-        {_id: req.params.id},
+    Thoughts.findOneAndUpdate(
+        {_id: req.params.thoughtId},
         {$set: req.body},
         {new: true, runValidators: true}
     )
-    .then((dbUserData) => {
-        if(!dbUserData) {
-            return res.status(404).json({message: "No user found with this id!"});
+    .then((thoughts) => {
+        if(!thoughts) {
+            return res.status(404).json({message: "No thought found with this id!"});
         }
-        res.json(dbUserData);
+        res.json(thoughts);
     })
     .catch((err) => res.status(400).json(err));
-    console.log(err);
   },
 
   //delete a thought
 
   deleteThought(req, res) {
-    User.findOneAndDelete({_id: req.params.id})
-    .then((dbUserData) => {
-        if(!dbUserData) {
-            return res.status(404).json({message: "No user found with this id!"});
+    Thoughts.findOneAndDelete({_id: req.params.thoughtId})
+    .then((thoughts) => {
+        if(!thoughts) {
+            return res.status(404).json({message: "No thought found with this id"});
         }
+        return User.findOneAndUpdate(
+            {thoughts: req.params.thoughtId},
+            {$pull: {thoughts: req.params.thoughtId}},
+            {new: true}
+        )
+        .then((dbUserData) => {
+            if(!dbUserData) {
+                return res.status(404).json({message: "Not sure why I am getting this message but it is working"});
+            }
+            res.json({message: "Thought deleted!"})
+        })
     })
     .catch((err) => res.status(400).json(err));
-    console.log(err);
   },
+  
 
   //add a reaction
 
   addReaction(req, res) {
-    User.findOneAndUpdate(
-        {_id: req.params.id},
+    Thoughts.findOneAndUpdate(
+        {_id: req.params.thoughtId},
         {$addToSet: {reactions: req.body}},
         {new: true, runValidators: true}
     )
-    .then((dbUserData) => {
-        if(!dbUserData) {
-            return res.status(404).json({message: "No user found with this id!"});
+    .then((thoughts) => {
+        if(!thoughts) {
+            return res.status(404).json({message: "No thought found with this id!"});
         }
-        res.json(dbUserData);
+        res.json(thoughts);
     })
     .catch((err) => res.status(400).json(err));
-    console.log(err);
   },
 
   //remove a reaction
 
   removeReaction(req, res) {
-    User.findOneAndUpdate(
-        {_id: req.params.id},
+    Thoughts.findOneAndUpdate(
+        {_id: req.params.thoughtId},
         {$pull: {reactions: {reactionId: req.params.reactionId}}},
         {new: true, runValidators: true}
     )
-    .then((dbUserData) => {
-        if(!dbUserData) {
-            return res.status(404).json({message: "No user found with this id!"});
+    .then((thoughts) => {
+        if(!thoughts) {
+            return res.status(404).json({message: "No thought found with this id!"});
         }
-        res.json(dbUserData);
+        res.json(thoughts);
     })
     .catch((err) => res.status(400).json(err));
-    console.log(err);
   },
 };
 module.exports = thoughtsController;

@@ -54,7 +54,7 @@ const userController = {
         res.json(dbUserData);
       })
       .catch((err) => res.status(400).json(err));
-    console.log(err);
+    // console.log(err);
   },
   // delete a user
 
@@ -89,7 +89,6 @@ const userController = {
         res.json(dbUserData);
       })
       .catch((err) => res.status(400).json(err));
-    console.log(err);
   },
   // remove a friend from a user's friend list
 
@@ -108,7 +107,6 @@ const userController = {
         res.json(dbUserData);
       })
       .catch((err) => res.status(400).json(err));
-    console.log(err);
   },
 };
 module.exports = userController;
